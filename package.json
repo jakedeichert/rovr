@@ -1,0 +1,54 @@
+{
+  "name": "rovr",
+  "version": "0.1.0",
+  "description": "A react + markdown static site generator",
+  "keywords": [
+    "react",
+    "markdown",
+    "static",
+    "site",
+    "generator"
+  ],
+  "preferGlobal": "true",
+  "main": "lib/core/index.js",
+  "bin": {
+    "rovr": "bin/index.js"
+  },
+  "scripts": {
+    "test": "echo 'Error: no test specified.... yet!' && exit 1",
+    "prepublish": "echo 'TODO: NODE_ENV=production && autobuild lib folder before publishing'",
+    "build": "echo 'Building...' && babel src -d lib && echo 'Build complete.'",
+    "watch": "echo 'Watching...' && babel -w src -d lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rovrjs/rovr.git"
+  },
+  "author": {
+    "name": "Jake Deichert",
+    "email": "jacobdeichert@gmail.com",
+    "url": "http://jakedeichert.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rovrjs/rovr/issues"
+  },
+  "homepage": "https://github.com/rovrjs/rovr#readme",
+  "dependencies": {
+    "babel-core": "^5.7.4",
+    "cheerio": "^0.19.0",
+    "front-matter": "^1.0.0",
+    "fs-extra": "^0.23.0",
+    "highlight.js": "^8.7.0",
+    "js-yaml": "^3.3.1",
+    "marked": "^0.3.3",
+    "merge": "^1.2.0",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0",
+    "recursive-readdir": "^1.2.1",
+    "utf8": "^2.1.1"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23"
+  }
+}
