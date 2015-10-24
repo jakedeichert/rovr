@@ -50,5 +50,8 @@
   },
   "devDependencies": {
     "babel": "^5.8.23"
+  },
+  "engines": {
+    "node" : ">=4.0.0" 
   }
 }
