@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": "echo 'Error: no test specified.... yet!' && exit 1",
-    "prepublish": "echo 'TODO: NODE_ENV=production && autobuild lib folder before publishing'",
+    "prepublish": "echo 'Preparing for publish...' && NODE_ENV=production npm run build",
     "build": "echo 'Building...' && babel src -d lib && echo 'Build complete.'",
     "watch": "echo 'Watching...' && babel -w src -d lib"
   },
@@ -52,6 +52,6 @@
     "babel": "^5.8.23"
   },
   "engines": {
-    "node" : ">=4.0.0" 
+    "node" : ">=4.0.0"
   }
 }
