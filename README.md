@@ -77,7 +77,7 @@ Here's a really brief example of a rovr website using some React components, a l
 ~~~jsx
 class PrimaryButton extends React.Component {
     render() {
-        return <a className="btn-primary" href={{ this.props.href }}>
+        return <a className="btn-primary" href={ this.props.href }>
             { this.props.text}
         </a>;
     }
