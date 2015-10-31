@@ -42,8 +42,7 @@ function run() {
     loadMetadata();
 
     let rovr = new Rovr(src, dest, config, siteMetadata)
-        // .pre(aPrePlugin())
-        // .post(aPostPlugin())
+        // .use(aPlugin())
         .build(function(err) {
             if (err) console.log(err);
             // build complete
