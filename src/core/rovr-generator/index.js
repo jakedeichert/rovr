@@ -35,38 +35,40 @@ export default function plugin(options) {
         if (options.verbose) console.log(msg);
     };
 
-    return function(files, rovr) {
-        init(files, rovr, options);
-        for (let f in files) {
-            let ext = path.extname(f);
-            let isMarkdown = false;
-            let view;
-            // Make sure the file should be parsed before doing so.
-            if (files[f].rovr.parse) {
-                switch (ext) {
-                    case '.md':
-                    case '.markdown':
-                        isMarkdown = true;
-                        // Replace markdown file extensions with html.
-                        let oldFilePath = f;
-                        f = f.replace(ext, '.html');
-                        files[f] = files[oldFilePath];
-                        delete files[oldFilePath];
-                    case '.html':
-                        view = viewBuilder.generate(files[f], isMarkdown);
-                        // Save back to the file's front matter body.
-                        files[f].body = htmlWithReact.generate(view.content, {highlightSyntax: options.highlightSyntax});
-                        logger(`GENERATED > ${f}`);
-                        break;
-                    default:
-                        // Other files are parsed and get string replacement for site/content metadata.
-                        // At the moment, you can't add logic to normal files.
-                        logger(`PARSED > ${f}`);
-                        view = viewBuilder.generate(files[f], false);
-                        files[f].body = view.content;
+    return {
+        pre: function(files, rovr) {
+            init(files, rovr, options);
+            for (let f in files) {
+                let ext = path.extname(f);
+                let isMarkdown = false;
+                let view;
+                // Make sure the file should be parsed before doing so.
+                if (files[f].rovr.parse) {
+                    switch (ext) {
+                        case '.md':
+                        case '.markdown':
+                            isMarkdown = true;
+                            // Replace markdown file extensions with html.
+                            let oldFilePath = f;
+                            f = f.replace(ext, '.html');
+                            files[f] = files[oldFilePath];
+                            delete files[oldFilePath];
+                        case '.html':
+                            view = viewBuilder.generate(files[f], isMarkdown);
+                            // Save back to the file's front matter body.
+                            files[f].body = htmlWithReact.generate(view.content, {highlightSyntax: options.highlightSyntax});
+                            logger(`GENERATED > ${f}`);
+                            break;
+                        default:
+                            // Other files are parsed and get string replacement for site/content metadata.
+                            // At the moment, you can't add logic to normal files.
+                            logger(`PARSED > ${f}`);
+                            view = viewBuilder.generate(files[f], false);
+                            files[f].body = view.content;
+                    }
+                } else {
+                    logger(`IGNORED > ${f}`);
                 }
-            } else {
-                logger(`IGNORED > ${f}`);
             }
         }
     };

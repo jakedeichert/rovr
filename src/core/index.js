@@ -12,8 +12,10 @@ import defaultConfig from './default-config.js'
 
 export default class Rovr {
     constructor(src, dest, config = {}, siteMetadata = {}) {
-        this.prePlugins = [];
-        this.postPlugins = [];
+        this.plugins = {
+            pre: [],
+            post: []
+        };
         this.src = path.normalize(src);
         this.dest = path.normalize(dest);
         this.config = merge.recursive(true, defaultConfig, config);
@@ -77,18 +79,26 @@ export default class Rovr {
     }
 
     /**
-     * Add plugins to the pre-generation pipeline.
+     * Add plugins to the generation pipeline.
+     * @param {Object} plugin - A plugin that will be added to the pipeline.
+     * @desc
+     * TODO: create better plugin documentation!
+     * Plugins with 'pre' and/or 'post' functions will be added to the
+     * respective pipelines.
+     *
+     * Example plugin:
+     * {
+     *      pre: function(files, rovr) {...},
+     *      post: function(files, rovr) {...}
+     * }
      */
-    pre(plugin) {
-        this.prePlugins.push(plugin);
-        return this;
-    }
-
-    /**
-     * Add plugins to the post-generation pipeline.
-     */
-    post(plugin) {
-        this.postPlugins.push(plugin);
+    use(plugin) {
+        if (plugin.hasOwnProperty('pre')) {
+            this.plugins.pre.push(plugin);
+        }
+        if (plugin.hasOwnProperty('post')) {
+            this.plugins.post.push(plugin);
+        }
         return this;
     }
 
@@ -97,23 +107,23 @@ export default class Rovr {
      */
     run() {
         // Load layouts and components.
-        rovrLayouts()(this.files, this);
-        rovrComponents()(this.files, this);
+        rovrLayouts().pre(this.files, this);
+        rovrComponents().pre(this.files, this);
 
         // Run the pre-generation plugins first.
-        for (let plugin of this.prePlugins) {
-            plugin(this.files, this);
+        for (let plugin of this.plugins.pre) {
+            plugin.pre(this.files, this);
         }
 
-        // Then run the static site generator plugin.
+        // Then run the generator plugin.
         rovrGenerator({
             highlightSyntax: this.config.highlightSyntax,
             verbose: true
-        })(this.files, this);
+        }).pre(this.files, this);
 
         // Finally, run the post-generation plugins.
-        for (let plugin of this.postPlugins) {
-            plugin(this.files, this);
+        for (let plugin of this.plugins.post) {
+            plugin.post(this.files, this);
         }
     }
 
