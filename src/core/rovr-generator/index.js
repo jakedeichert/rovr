@@ -32,7 +32,7 @@ function init(files, rovr, options) {
  */
 export default function plugin(options) {
     let logger = function(msg) {
-        if (options.verbose) console.log(msg);
+        if (options.verbose === true) console.log(msg);
     };
 
     return {
@@ -60,8 +60,8 @@ export default function plugin(options) {
                             logger(`GENERATED > ${f}`);
                             break;
                         default:
-                            // Other files are parsed and get string replacement for site/content metadata.
-                            // At the moment, you can't add logic to normal files.
+                            // Other files are still parsed. String replacement is done for
+                            // site/content metadata and layouts are applied too.
                             logger(`PARSED > ${f}`);
                             view = viewBuilder.generate(files[f], false);
                             files[f].body = view.content;
