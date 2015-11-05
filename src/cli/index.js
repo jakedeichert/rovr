@@ -4,31 +4,19 @@ import path from 'path';
 import yaml from 'js-yaml';
 
 
-let src = '.';
-let dest = '_BUILD';
-let config = {};
-let siteMetadata = {};
-
-function loadConfig() {
-    try {
-        let filePath = path.normalize(`${src}/_config.yml`);
-        config = yaml.safeLoad(fse.readFileSync(filePath, 'utf8'));
-    } catch(e) {
-        console.log('INFO > no config file specified.. now using default');
-        config = {};
+function attemptLoadObjectData(pathAttempts) {
+    let i = 0;
+    while (i < pathAttempts.length) {
+        try {
+            return yaml.safeLoad(fse.readFileSync(pathAttempts[i], 'utf8'));
+        } catch(e) {
+            console.log(`INFO > couldn't find ${pathAttempts[i]}`);
+        }
+        i++;
     }
+    return {};
 }
 
-
-function loadMetadata() {
-    try {
-        let filePath = path.normalize(`${src}/_metadata.yml`);
-        siteMetadata = yaml.safeLoad(fse.readFileSync(filePath, 'utf8'));
-    } catch(e) {
-        console.log('INFO > no global metadata file specified');
-        siteMetadata = {};
-    }
-}
 
 
 
@@ -38,8 +26,16 @@ function loadMetadata() {
 
 function run() {
     console.time('generation_time');
-    loadConfig();
-    loadMetadata();
+    let src = '.';
+    let dest = '_BUILD';
+    let config = attemptLoadObjectData([
+        path.normalize(`${src}/_config.yml`),
+        path.normalize(`${src}/_config.json`)
+    ]);
+    let siteMetadata = attemptLoadObjectData([
+        path.normalize(`${src}/_metadata.yml`),
+        path.normalize(`${src}/_metadata.json`)
+    ]);
 
     let rovr = new Rovr(src, dest, config, siteMetadata)
         // .use(aPlugin())
