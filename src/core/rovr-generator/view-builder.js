@@ -28,7 +28,7 @@ export default class ViewBuilder {
      */
     getHTML(markdown) {
         let html = '';
-        if (this.options.highlightSyntax) {
+        if (this.options.highlightSyntax === true) {
             html = marked(markdown, {
                 highlight: function (code, lang) {
                     // If the lang is undefined, it's not a code block so I

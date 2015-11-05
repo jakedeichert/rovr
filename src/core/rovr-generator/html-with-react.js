@@ -74,7 +74,7 @@ export default class HtmlWithReact {
         }
 
         // Add `hljs` class to every pre>code element.
-        if (options.highlightSyntax) $('pre code').addClass('hljs');
+        if (options.highlightSyntax === true) $('pre code').addClass('hljs');
 
         return $.html();
     }
