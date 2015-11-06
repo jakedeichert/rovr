@@ -42,9 +42,9 @@ Here's the basic structure for a rovr website:
 website/
     _BUILD/ --------------- the default destination that rovr builds to
     _components/ ---------- js(x) React component files
-    buttons/
-        PrimaryButton.jsx
-        SecondaryButton.js
+        buttons/
+            PrimaryButton.jsx
+            SecondaryButton.js
         Footer.js
         Header.jsx
         Nav.js
@@ -170,4 +170,3 @@ More details coming soon for:
 Copyright (c) 2015, [Jake Deichert](https://github.com/jakedeichert)
 
 [MIT License](https://github.com/rovrjs/rovr/blob/master/LICENSE)
-
