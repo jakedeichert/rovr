@@ -4,7 +4,7 @@ import utf8 from 'utf8';
 import frontMatter from 'front-matter';
 import merge from 'merge';
 import recursiveRead from 'recursive-readdir';
-import rovrGenerator from './rovr-generator/index.js';
+import rovrRenderer from './rovr-renderer/index.js';
 import rovrLayouts from './rovr-layouts/index.js';
 import rovrComponents from './rovr-components/index.js';
 import defaultConfig from './default-config.js'
@@ -115,8 +115,8 @@ export default class Rovr {
             plugin.pre(this.files, this);
         }
 
-        // Then run the generator plugin.
-        rovrGenerator({
+        // Then render React components and markdown code.
+        rovrRenderer({
             highlightSyntax: this.config.highlightSyntax,
             verbose: true
         }).pre(this.files, this);
