@@ -39,26 +39,26 @@ rovr expects a few things from your source directory...
 Here's the basic structure for a rovr website:
 
 ~~~
-website/
-    _BUILD/ --------------- the default destination that rovr builds to
-    _components/ ---------- js(x) React component files
-        buttons/
-            PrimaryButton.jsx
-            SecondaryButton.js
-        Footer.js
-        Header.jsx
-        Nav.js
-    _layouts/ ------------- html layout files for pages
-        default.html
-        post.html
-    _my-stuff/ ------------ rovr ignores files/dirs that start with an underscore
-        secret-journal.md
-    posts/ ---------------- you like to blog right?
-        post-1.md
-        post-2.md
-    _config.yml ----------- configure rovr
-    _metadata.yml --------- site metadata
-    index.html ------------ everyone has one of these
+website
+├── _BUILD --------------- the default destination that rovr builds to
+├── _components ---------- js(x) React component files
+│   ├── buttons
+│   │   ├── PrimaryButton.jsx
+│   │   └── SecondaryButton.js
+│   ├── Footer.js
+│   ├── Header.jsx
+│   └── Nav.js
+├── _layouts ------------- html layout files for pages
+│   ├── default.html
+│   └── post.html
+├── _my-stuff ------------ rovr ignores files/dirs that start with an underscore
+│   └── secret-journal.md
+├── posts ---------------- you like to blog right?
+│   ├── post-1.md
+│   └── post-2.md
+├── _config.yml ---------- configure rovr
+├── _metadata.yml -------- site metadata
+└── index.html ----------- everyone has one of these
 ~~~
 
 
