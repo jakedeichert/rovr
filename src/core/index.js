@@ -139,9 +139,7 @@ export default class Rovr {
             let destPath = path.normalize(`${this.dest}/${file}`);
             // If the file front matter has a body, then write the new file.
             if (this.files[file].body) {
-                fse.outputFile(destPath, this.files[file].body, function(err) {
-                    if (err) console.log('ROVR WRITE ERROR > ' + err);
-                });
+                fse.outputFileSync(destPath, this.files[file].body);
             }
             // If it doesn't have a body, then just do a direct file copy.
             else {
