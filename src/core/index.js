@@ -108,34 +108,14 @@ export default class Rovr {
         return this;
     }
 
-    /**
-     * Run all plugins on the files.
-     */
-    run() {
-        return new Promise((resolve, reject) => {
-            this.runPluginGroup(this.plugins.pre)
-                .then(() => {
-                    // pre plugins complete
-                    return this.runPluginGroup(this.plugins.post);
-                })
-                .then(() => {
-                    // post plugins complete
-                    resolve();
-                })
-                .catch((reason) => {
-                    reject(reason);
-                });
-        });
-    }
 
     /**
      * Sequentially loop through all plugins as their callbacks return.
-     * @param {Function[]} pluginList - List of runnable plugin functions.
      * @desc All plugins are transformed into promises. As each plugin's callback
      * returns, the next plugin in the list will begin.
      */
-    runPluginGroup(pluginList) {
-        if (pluginList.length < 1) return Promise.resolve();
+    run() {
+        let pluginList = [...this.plugins.pre, ...this.plugins.post];
         let initialPlugin = new Promise((resolve, reject) => {
                 pluginList[0](this.files, this, resolve);
             });
@@ -156,7 +136,7 @@ export default class Rovr {
     output() {
         // Delete the destination folder before building.
         fse.removeSync(this.dest);
-        
+
         for (let file in this.files) {
             // Don't output files/dirs that start with an underscore.
             if (/\/_/g.test(`/${file}`)) continue;
