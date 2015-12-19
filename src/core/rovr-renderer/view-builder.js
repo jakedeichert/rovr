@@ -5,10 +5,13 @@ import View from './view.js';
 
 export default class ViewBuilder {
 
-    constructor(siteMetadata, options) {
+    constructor(siteMetadata, layouts, options) {
         this.siteMetadata = siteMetadata;
         this.layouts = {};
         this.options = options;
+        for (let layout of layouts) {
+            this.addLayout(layout.name, layout.file);
+        }
     }
 
     /**

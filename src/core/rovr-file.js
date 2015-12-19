@@ -12,6 +12,7 @@ export default class RovrFile {
         this.body = '';
         this.metadata = {};
         this._loadData();
+        Object.seal(this);
     }
 
     /**

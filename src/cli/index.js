@@ -38,7 +38,7 @@ function run() {
     ]);
 
     let rovr = new Rovr(src, dest, config, siteMetadata)
-        // .use(aPlugin())
+        // .use(new SomePlugin())
         .build()
         .then(() => {
             console.log('rovr generation complete');

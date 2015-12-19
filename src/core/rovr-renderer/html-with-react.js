@@ -7,11 +7,21 @@ import vm from 'vm';
 export default class HtmlWithReact {
     /**
      * Constructor for HtmlWithReact.
-     * @param {string} reactComponents - JavaScript React components in the form of a string.
+     * @param {Object[]} reactComponentData - List of objects containing component names and files.
      * @param {Object} context - An optional object to add more context to the VM sandbox.
+     * @desc
+     * The reactComponentData list should contain objects in this format:
+     * {
+     *      name: 'ComponentName',
+     *      file: RovrFile
+     * }
      */
-    constructor(reactComponents, context = {}) {
-        this.reactComponents = reactComponents;
+    constructor(reactComponentData, context = {}) {
+        // Compile react component files into one string.
+        this.reactComponents = '';
+        for (let component of reactComponentData) {
+            this.reactComponents += component.file.body;
+        }
 
         // Load the optional context and React into a VM sandbox.
         this.vmSandbox = context;

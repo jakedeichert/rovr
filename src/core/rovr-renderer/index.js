@@ -26,16 +26,11 @@ import HtmlWithReact from './html-with-react.js';
     }
 
     post(files, rovr, callback) {
-        let componentsString = '';
-        this.viewBuilder = new ViewBuilder(rovr.siteMetadata, {highlightSyntax: this.options.highlightSyntax});
-        // Get layouts and components.
-        for (let l in rovr.layouts) {
-            this.viewBuilder.addLayout(rovr.layouts[l].name, rovr.layouts[l].fileData);
-        }
-        for (let c in rovr.components) {
-            componentsString += rovr.components[c].fileData.body;
-        }
-        this.htmlWithReact = new HtmlWithReact(componentsString, {site: rovr.siteMetadata});
+        this.viewBuilder = new ViewBuilder(
+            rovr.siteMetadata,
+            rovr.plugins.RovrLayouts.layouts,
+            {highlightSyntax: this.options.highlightSyntax});
+        this.htmlWithReact = new HtmlWithReact(rovr.plugins.RovrComponents.components, {site: rovr.siteMetadata});
 
         for (let f of files) {
             let ext = path.extname(f.path);

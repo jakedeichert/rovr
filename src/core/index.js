@@ -11,7 +11,8 @@ import defaultConfig from './default-config.js'
 
 export default class Rovr {
     constructor(src, dest, config = {}, siteMetadata = {}) {
-        this.plugins = {
+        this.plugins = {};
+        this.pluginPipelines = {
             pre: [],
             post: []
         };
@@ -20,8 +21,6 @@ export default class Rovr {
         this.config = merge.recursive(true, defaultConfig, config);
         this.siteMetadata = siteMetadata;
         this.files = [];
-        this.layouts = {};
-        this.components = {};
         this.use(new RovrLayouts());
         this.use(new RovrComponents());
         // The renderer plugin starts the post-render pipeline.
@@ -29,12 +28,13 @@ export default class Rovr {
             highlightSyntax: this.config.highlightSyntax,
             verbose: this.config.verbose
         }));
+        Object.seal(this);
     }
 
     /**
      * Get all files in the source directory.
      */
-    loadFiles() {
+    _loadFiles() {
         return new Promise((resolve, reject) => {
             this.config.excludes.push(this.dest);
             fileList(this.src, this.config.excludes)
@@ -69,11 +69,12 @@ export default class Rovr {
      * }
      */
     use(plugin) {
+        if (!this.plugins[plugin.constructor.name]) this.plugins[plugin.constructor.name] = plugin;
         if (typeof plugin.pre === 'function') {
-            this.plugins.pre.push(plugin.pre.bind(plugin));
+            this.pluginPipelines.pre.push(plugin.pre.bind(plugin));
         }
         if (typeof plugin.post === 'function') {
-            this.plugins.post.push(plugin.post.bind(plugin));
+            this.pluginPipelines.post.push(plugin.post.bind(plugin));
         }
         return this;
     }
@@ -83,8 +84,8 @@ export default class Rovr {
      * @desc All plugins are transformed into promises. As each plugin's callback
      * returns, the next plugin in the list will begin.
      */
-    run() {
-        let pluginList = [...this.plugins.pre, ...this.plugins.post];
+    _run() {
+        let pluginList = [...this.pluginPipelines.pre, ...this.pluginPipelines.post];
         let initialPlugin = new Promise((resolve, reject) => {
                 pluginList[0](this.files, this, resolve);
             });
@@ -102,7 +103,7 @@ export default class Rovr {
     /**
      * Output all files to the destination directory.
      */
-    output() {
+    _output() {
         // Delete the destination directory before building.
         fse.removeSync(this.dest);
 
@@ -117,14 +118,14 @@ export default class Rovr {
     build() {
         return new Promise((resolve, reject) => {
             // Load the files.
-            this.loadFiles()
+            this._loadFiles()
                 .then(() => {
                     // Run all of the plugins.
-                    return this.run();
+                    return this._run();
                 })
                 .then(() => {
                     // Output the final files.
-                    this.output();
+                    this._output();
                     resolve();
                 })
                 .catch((reason) => {
