@@ -25,7 +25,7 @@ import HtmlWithReact from './html-with-react.js';
         if (this.options.verbose === true) console.log(msg);
     }
 
-    pre(files, rovr, callback) {
+    post(files, rovr, callback) {
         let componentsString = '';
         this.viewBuilder = new ViewBuilder(rovr.siteMetadata, {highlightSyntax: this.options.highlightSyntax});
         // Get layouts and components.

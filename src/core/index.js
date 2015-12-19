@@ -25,6 +25,11 @@ export default class Rovr {
         this.components = {};
         this.use(new RovrLayouts());
         this.use(new RovrComponents());
+        // The renderer plugin starts the post-render pipeline.
+        this.use(new RovrRenderer({
+            highlightSyntax: this.config.highlightSyntax,
+            verbose: this.config.verbose
+        }));
     }
 
     /**
@@ -149,6 +154,9 @@ export default class Rovr {
      * Output all files to the destination directory.
      */
     output() {
+        // Delete the destination folder before building.
+        fse.removeSync(this.dest);
+        
         for (let file in this.files) {
             // Don't output files/dirs that start with an underscore.
             if (/\/_/g.test(`/${file}`)) continue;
@@ -174,17 +182,10 @@ export default class Rovr {
             // Load the files.
             this.loadFiles()
                 .then(() => {
-                    // The renderer plugin has to be last in the pre-generation pipeline.
-                    this.use(new RovrRenderer({
-                        highlightSyntax: this.config.highlightSyntax,
-                        verbose: this.config.verbose
-                    }));
                     // Run all of the plugins.
                     return this.run();
                 })
                 .then(() => {
-                    // Delete the destination folder before building.
-                    fse.removeSync(this.dest);
                     // Output the final files.
                     this.output();
                     resolve();
