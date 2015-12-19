@@ -1,9 +1,8 @@
 import path from 'path';
 import fse from 'fs-extra';
-import utf8 from 'utf8';
-import frontMatter from 'front-matter';
 import merge from 'merge';
 import recursiveRead from 'recursive-readdir';
+import RovrFile from './rovr-file.js';
 import RovrRenderer from './rovr-renderer/index.js';
 import RovrLayouts from './rovr-layouts/index.js';
 import RovrComponents from './rovr-components/index.js';
@@ -20,7 +19,7 @@ export default class Rovr {
         this.dest = path.normalize(dest);
         this.config = merge.recursive(true, defaultConfig, config);
         this.siteMetadata = siteMetadata;
-        this.files = {};
+        this.files = [];
         this.layouts = {};
         this.components = {};
         this.use(new RovrLayouts());
@@ -39,13 +38,13 @@ export default class Rovr {
         return new Promise((resolve, reject) => {
             this.config.excludes.push(this.dest);
             fileList(this.src, this.config.excludes)
-                .then((files) => {
+                .then((filePaths) => {
                     // TODO: force add file paths specified in this.includes
-                    for (let f of files) {
+                    for (let p of filePaths) {
                         // If the src path is included in the file path, remove it.
                         // All file paths will be relative to the src directory.
-                        if (this.src != '.' && this.src != './') f = f.replace(`${this.src}/`, '');
-                        this.files[f] = this.getFrontMatter(f);
+                        if (this.src != '.' && this.src != './') p = p.replace(`${this.src}/`, '');
+                        this.files.push(new RovrFile(p, this.src));
                     }
                     resolve();
                 })
@@ -53,35 +52,6 @@ export default class Rovr {
                     reject(reason);
                 });
         });
-    }
-
-    /**
-     * Read the file and get its front matter if it's a utf8 encoded file.
-     * @param {string} file - The file path relative to the source directory.
-     */
-    getFrontMatter(file) {
-        let fileData = fse.readFileSync(path.normalize(`${this.src}/${file}`));
-        try {
-            // Parse for front matter if it's a utf8 file.
-            let fileContents = utf8.decode(fileData.toString());
-            // Get the front matter attributes and body from the file contents.
-            let fm = frontMatter(fileContents);
-            fm.rovr = {
-                parse: true,
-                utf8: true
-            };
-            // Don't parse this file if it didn't have a front matter header at all.
-            if (!frontMatter.test(fileContents)) fm.rovr.parse = false;
-            return fm;
-        } catch(e) {
-            // If not a utf8 file, it should not be parsed.
-            return {
-                rovr: {
-                    parse: false,
-                    utf8: false
-                }
-            };
-        }
     }
 
     /**
@@ -108,7 +78,6 @@ export default class Rovr {
         return this;
     }
 
-
     /**
      * Sequentially loop through all plugins as their callbacks return.
      * @desc All plugins are transformed into promises. As each plugin's callback
@@ -134,23 +103,11 @@ export default class Rovr {
      * Output all files to the destination directory.
      */
     output() {
-        // Delete the destination folder before building.
+        // Delete the destination directory before building.
         fse.removeSync(this.dest);
 
-        for (let file in this.files) {
-            // Don't output files/dirs that start with an underscore.
-            if (/\/_/g.test(`/${file}`)) continue;
-
-            let srcPath = path.normalize(`${this.src}/${file}`);
-            let destPath = path.normalize(`${this.dest}/${file}`);
-            // If the file front matter has a body, then write the new file.
-            if (this.files[file].body) {
-                fse.outputFileSync(destPath, this.files[file].body);
-            }
-            // If it doesn't have a body, then just do a direct file copy.
-            else {
-                fse.copySync(srcPath, destPath);
-            }
+        for (let file of this.files) {
+            file.save(this.dest);
         }
     }
 
@@ -186,11 +143,11 @@ export default class Rovr {
 function fileList(dir, excludes = []) {
     return new Promise (function (resolve, reject) {
         // Recursively read the specified directory
-        recursiveRead(dir, excludes, function (err, files) {
+        recursiveRead(dir, excludes, function (err, filePaths) {
             // Reject if there was an error
             if (err) reject(err);
             // Resolve if the files are ready
-            resolve(files);
+            resolve(filePaths);
         });
     });
 }

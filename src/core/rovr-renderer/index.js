@@ -37,36 +37,33 @@ import HtmlWithReact from './html-with-react.js';
         }
         this.htmlWithReact = new HtmlWithReact(componentsString, {site: rovr.siteMetadata});
 
-        for (let f in files) {
-            let ext = path.extname(f);
+        for (let f of files) {
+            let ext = path.extname(f.path);
             let isMarkdown = false;
             let view;
             // Make sure the file should be parsed before doing so.
-            if (files[f].rovr.parse) {
+            if (f.shouldParse) {
                 switch (ext) {
                     case '.md':
                     case '.markdown':
-                        isMarkdown = true;
                         // Replace markdown file extensions with html.
-                        let oldFilePath = f;
-                        f = f.replace(ext, '.html');
-                        files[f] = files[oldFilePath];
-                        delete files[oldFilePath];
+                        isMarkdown = true;
+                        f.path = f.path.replace(ext, '.html');
                     case '.html':
-                        view = this.viewBuilder.generate(files[f], isMarkdown);
-                        // Save back to the file's front matter body.
-                        files[f].body = this.htmlWithReact.generate(view.content, {highlightSyntax: this.options.highlightSyntax});
-                        this.logger(`GENERATED > ${f}`);
+                        view = this.viewBuilder.generate(f, isMarkdown);
+                        // Save back to the file's body.
+                        f.body = this.htmlWithReact.generate(view.content, {highlightSyntax: this.options.highlightSyntax});
+                        this.logger(`GENERATED > ${f.path}`);
                         break;
                     default:
                         // Other files are still parsed. String replacement is done for
                         // site/content metadata and layouts are applied too.
-                        this.logger(`PARSED > ${f}`);
-                        view = this.viewBuilder.generate(files[f], false);
-                        files[f].body = view.content;
+                        this.logger(`PARSED > ${f.path}`);
+                        view = this.viewBuilder.generate(f, false);
+                        f.body = view.content;
                 }
             } else {
-                // this.logger(`IGNORED > ${f}`);
+                // this.logger(`IGNORED > ${f.path}`);
             }
         }
         callback();
