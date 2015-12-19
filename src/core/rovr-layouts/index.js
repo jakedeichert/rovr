@@ -2,7 +2,7 @@ import path from 'path';
 
 export default function plugin() {
     return {
-        pre: function(files, rovr) {
+        pre: function(files, rovr, callback) {
             for (let f in files) {
                 // Check if it's in the layouts folder.
                 if (f.match(`^_layouts`)) {
@@ -13,6 +13,7 @@ export default function plugin() {
                     delete files[f];
                 }
             }
+            callback();
         }
     };
 }

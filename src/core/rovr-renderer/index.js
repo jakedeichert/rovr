@@ -36,7 +36,7 @@ export default function plugin(options) {
     };
 
     return {
-        pre: function(files, rovr) {
+        pre: function(files, rovr, callback) {
             init(files, rovr, options);
             for (let f in files) {
                 let ext = path.extname(f);
@@ -67,9 +67,10 @@ export default function plugin(options) {
                             files[f].body = view.content;
                     }
                 } else {
-                    logger(`IGNORED > ${f}`);
+                    // logger(`IGNORED > ${f}`);
                 }
             }
+            callback();
         }
     };
 }

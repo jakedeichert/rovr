@@ -23,6 +23,8 @@ export default class Rovr {
         this.files = {};
         this.layouts = {};
         this.components = {};
+        this.use(rovrLayouts());
+        this.use(rovrComponents());
     }
 
     /**
@@ -88,16 +90,16 @@ export default class Rovr {
      *
      * Example plugin:
      * {
-     *      pre: function(files, rovr) {...},
-     *      post: function(files, rovr) {...}
+     *      pre: function(files, rovr, callback) {...},
+     *      post: function(files, rovr, callback) {...}
      * }
      */
     use(plugin) {
         if (plugin.hasOwnProperty('pre')) {
-            this.plugins.pre.push(plugin);
+            this.plugins.pre.push(plugin.pre);
         }
         if (plugin.hasOwnProperty('post')) {
-            this.plugins.post.push(plugin);
+            this.plugins.post.push(plugin.post);
         }
         return this;
     }
@@ -106,25 +108,42 @@ export default class Rovr {
      * Run all plugins on the files.
      */
     run() {
-        // Load layouts and components.
-        rovrLayouts().pre(this.files, this);
-        rovrComponents().pre(this.files, this);
+        return new Promise((resolve, reject) => {
+            this.runPluginGroup(this.plugins.pre)
+                .then(() => {
+                    // pre plugins complete
+                    return this.runPluginGroup(this.plugins.post);
+                })
+                .then(() => {
+                    // post plugins complete
+                    resolve();
+                })
+                .catch((reason) => {
+                    reject(reason);
+                });
+        });
+    }
 
-        // Run the pre-generation plugins first.
-        for (let plugin of this.plugins.pre) {
-            plugin.pre(this.files, this);
-        }
-
-        // Then render React components and markdown code.
-        rovrRenderer({
-            highlightSyntax: this.config.highlightSyntax,
-            verbose: true
-        }).pre(this.files, this);
-
-        // Finally, run the post-generation plugins.
-        for (let plugin of this.plugins.post) {
-            plugin.post(this.files, this);
-        }
+    /**
+     * Sequentially loop through all plugins as their callbacks return.
+     * @param {Function[]} pluginList - List of runnable plugin functions.
+     * @desc All plugins are transformed into promises. As each plugin's callback
+     * returns, the next plugin in the list will begin.
+     */
+    runPluginGroup(pluginList) {
+        if (pluginList.length < 1) return Promise.resolve();
+        let initialPlugin = new Promise((resolve, reject) => {
+                pluginList[0](this.files, this, resolve);
+            });
+        let otherPlugins = pluginList.slice(1);
+        // Loop through all plugin functions.
+        return otherPlugins.reduce((previous, current) => {
+            return previous.then(() => {
+                return new Promise((resolve, reject) => {
+                    current(this.files, this, resolve);
+                });
+            });
+        }, initialPlugin);
     }
 
     /**
@@ -151,27 +170,31 @@ export default class Rovr {
     /**
      * Begin the build process.
      */
-    build(callback) {
-        // Delete the destination folder before building.
-        fse.removeSync(this.dest);
-
-        let _this = this;
-        // Load the files.
-        this.loadFiles()
-            .then(function() {
-                // Run all plugins on the files.
-                _this.run();
-                // Output the final files.
-                _this.output();
-                // Return to the callback.
-                callback();
-            })
-            .catch(function(reason) {
-                callback(reason);
-            });
-        return this;
+    build() {
+        return new Promise((resolve, reject) => {
+            // Load the files.
+            this.loadFiles()
+                .then(() => {
+                    // The renderer plugin has to be last in the pre-generation pipeline.
+                    this.use(rovrRenderer({
+                        highlightSyntax: this.config.highlightSyntax,
+                        verbose: this.config.verbose
+                    }));
+                    // Run all of the plugins.
+                    return this.run();
+                })
+                .then(() => {
+                    // Delete the destination folder before building.
+                    fse.removeSync(this.dest);
+                    // Output the final files.
+                    this.output();
+                    resolve();
+                })
+                .catch((reason) => {
+                    reject(reason);
+                });
+        });
     }
-
 }
 
 /**
