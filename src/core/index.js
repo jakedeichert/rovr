@@ -4,9 +4,9 @@ import utf8 from 'utf8';
 import frontMatter from 'front-matter';
 import merge from 'merge';
 import recursiveRead from 'recursive-readdir';
-import rovrRenderer from './rovr-renderer/index.js';
-import rovrLayouts from './rovr-layouts/index.js';
-import rovrComponents from './rovr-components/index.js';
+import RovrRenderer from './rovr-renderer/index.js';
+import RovrLayouts from './rovr-layouts/index.js';
+import RovrComponents from './rovr-components/index.js';
 import defaultConfig from './default-config.js'
 
 
@@ -23,29 +23,28 @@ export default class Rovr {
         this.files = {};
         this.layouts = {};
         this.components = {};
-        this.use(rovrLayouts());
-        this.use(rovrComponents());
+        this.use(new RovrLayouts());
+        this.use(new RovrComponents());
     }
 
     /**
      * Get all files in the source directory.
      */
     loadFiles() {
-        let _this = this;
-        return new Promise(function (resolve, reject) {
-            fileList(_this.src, _this.config.excludes)
-                .then(function(files) {
+        return new Promise((resolve, reject) => {
+            this.config.excludes.push(this.dest);
+            fileList(this.src, this.config.excludes)
+                .then((files) => {
                     // TODO: force add file paths specified in this.includes
                     for (let f of files) {
                         // If the src path is included in the file path, remove it.
                         // All file paths will be relative to the src directory.
-                        if (_this.src != '.' && _this.src != './') f = f.replace(`${_this.src}/`, '');
-                        _this.files[f] = _this.getFrontMatter(f);
+                        if (this.src != '.' && this.src != './') f = f.replace(`${this.src}/`, '');
+                        this.files[f] = this.getFrontMatter(f);
                     }
                     resolve();
                 })
-                .catch(function (reason) {
-                    console.log(reason);
+                .catch((reason) => {
                     reject(reason);
                 });
         });
@@ -95,11 +94,11 @@ export default class Rovr {
      * }
      */
     use(plugin) {
-        if (plugin.hasOwnProperty('pre')) {
-            this.plugins.pre.push(plugin.pre);
+        if (typeof plugin.pre === 'function') {
+            this.plugins.pre.push(plugin.pre.bind(plugin));
         }
-        if (plugin.hasOwnProperty('post')) {
-            this.plugins.post.push(plugin.post);
+        if (typeof plugin.post === 'function') {
+            this.plugins.post.push(plugin.post.bind(plugin));
         }
         return this;
     }
@@ -176,7 +175,7 @@ export default class Rovr {
             this.loadFiles()
                 .then(() => {
                     // The renderer plugin has to be last in the pre-generation pipeline.
-                    this.use(rovrRenderer({
+                    this.use(new RovrRenderer({
                         highlightSyntax: this.config.highlightSyntax,
                         verbose: this.config.verbose
                     }));
@@ -201,7 +200,7 @@ export default class Rovr {
  * Get a list of all files in a directory.
  * @param {string} dir - The directory to find files in.
  * @param {string[]} excludes - An optional list of files and directories to ignore.
- *      Supports glob matching via minimatch.
+ *  Supports glob matching via minimatch.
  */
 function fileList(dir, excludes = []) {
     return new Promise (function (resolve, reject) {
