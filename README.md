@@ -1,8 +1,14 @@
-<a href="https://github.com/rovrjs/rovr">
-    <img alt="rovr logo" src="https://raw.githubusercontent.com/rovrjs/rovrjs.github.io/master-src/assets/images/logos/rovr-dark.png">
-</a>
+<p align="center">
+    <a href="https://github.com/rovrjs/rovr">
+        <img alt="rovr logo" src="https://raw.githubusercontent.com/rovrjs/rovrjs.github.io/master-src/assets/images/logos/rovr-dark-small.png" width="400">
+    </a>
+</p>
 
-> A fast and flexible React static site generator
+<p align="center">
+    <strong>A fast and flexible React static site generator</strong>
+</p>
+
+---
 
 **rovr** is a special static site generator that allows you to mix React, html, and markdown when writing pages.
 
