@@ -38,11 +38,14 @@ function run() {
     ]);
 
     let rovr = new Rovr(src, dest, config, siteMetadata)
-        // .use(aPlugin())
-        .build(function(err) {
-            if (err) console.log(err);
-            // build complete
+        // .use(new SomePlugin())
+        .build()
+        .then(() => {
+            console.log('rovr generation complete');
             console.timeEnd('generation_time');
+        })
+        .catch((reason) => {
+            console.log(`rovr generation failed: ${reason}`);
         });
 }
 

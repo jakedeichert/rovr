@@ -13,4 +13,6 @@ config.includes = [];
 // Should syntax be highlighted.
 config.highlightSyntax = false;
 
+config.verbose = false;
+
 export default config;

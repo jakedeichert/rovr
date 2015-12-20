@@ -5,20 +5,22 @@ import View from './view.js';
 
 export default class ViewBuilder {
 
-    constructor(siteMetadata, options) {
+    constructor(siteMetadata, layouts, options) {
         this.siteMetadata = siteMetadata;
         this.layouts = {};
         this.options = options;
+        for (let layout of layouts) {
+            this.addLayout(layout.name, layout.file);
+        }
     }
 
     /**
      * Add a layout to the list of available layouts.
      * @param {string} layoutName - The name of the layout.
-     * @param {Object} frontMatter - The front matter of the layout containing
-     *      the body and attributes.
+     * @param {Object} file - The RovrFile data object.
      */
-    addLayout(layoutName, frontMatter) {
-        this.layouts[layoutName] = frontMatter;
+    addLayout(layoutName, file) {
+        this.layouts[layoutName] = file;
     }
 
     /**
@@ -47,15 +49,14 @@ export default class ViewBuilder {
     }
 
     /**
-     * Generates a page based on front matter data.
-     * @param {Object} frontMatter - The front matter of the page containing
-     *      the body and attributes.
+     * Generates a page based on the file's metadata.
+     * @param {Object} file - The RovrFile data object.
      * @param {bool} convertMarkdown - Whether to convert markdown to HTML or not.
      * @return {string} The final view.
      */
-    generate(frontMatter, convertMarkdown) {
-        let body = convertMarkdown ? this.getHTML(frontMatter.body) : frontMatter.body;
-        let view = new View(body, frontMatter.attributes);
+    generate(file, convertMarkdown) {
+        let body = convertMarkdown ? this.getHTML(file.body) : file.body;
+        let view = new View(body, file.metadata);
 
         // If it has a layout, apply the layout.
         if (view.metadata.layout) {
@@ -74,8 +75,8 @@ export default class ViewBuilder {
      * @return {string} The final layout.
      */
     getLayout(layoutName) {
-        let lfm = this.layouts[layoutName];
-        let layout = new View(lfm.body, lfm.attributes);
+        let layoutFile = this.layouts[layoutName];
+        let layout = new View(layoutFile.body, layoutFile.metadata);
         // Check if this layout has a parent layout...
         // This will recursively load layouts into other layouts.
         if (layout.metadata.layout) {
