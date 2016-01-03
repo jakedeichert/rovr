@@ -28,20 +28,16 @@ export default class ViewBuilder {
      * @param {string} markdown - The markdown to convert to html.
      * @return {string} The converted html.
      */
-    getHTML(markdown) {
+    _getHTML(markdown) {
         let html = '';
         if (this.options.highlightSyntax === true) {
             html = marked(markdown, {
                 highlight: function (code, lang) {
-                    // If the lang is undefined, it's not a code block so I
-                    // prepend and append a special string which helps me remove
-                    // the generated <pre><code> tags that marked adds.
-                    if (lang == undefined) return `rovr_not_code${code}rovr_not_code`;
+                    // If the lang is undefined, don't highlight this code block.
+                    if (lang == undefined) return code;
                     return hljs.highlight(lang, code).value;
                 }
             });
-            // Remove <pre><code> tags that were wrongly added.
-            html = html.replace(/<pre><code>rovr_not_code|rovr_not_code[\n]*<\/code><\/pre>/g, '');
         } else {
             html = marked(markdown);
         }
@@ -55,7 +51,7 @@ export default class ViewBuilder {
      * @return {string} The final view.
      */
     generate(file, convertMarkdown) {
-        let body = convertMarkdown ? this.getHTML(file.body) : file.body;
+        let body = convertMarkdown ? this._getHTML(file.body) : file.body;
         let view = new View(body, file.metadata);
 
         // If it has a layout, apply the layout.
