@@ -86,6 +86,9 @@ export default class HtmlWithReact {
         // Add `hljs` class to every pre>code element.
         if (options.highlightSyntax === true) $('pre code').addClass('hljs');
 
-        return $.html();
+        // Remove all empty paragraph tags that cheerio generates. Cheerio
+        // generates these to fix broken <p> tag output that marked
+        // generates under certain circumstances.
+        return $.html().replace(/<p><\/p>/g, '');
     }
 }
