@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rovrjs/rovr.git"
+    "url": "git+https://github.com/jakedeichert/rovr.git"
   },
   "author": {
     "name": "Jake Deichert",
@@ -33,9 +33,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rovrjs/rovr/issues"
+    "url": "https://github.com/jakedeichert/rovr/issues"
   },
-  "homepage": "https://github.com/rovrjs/rovr#readme",
+  "homepage": "https://github.com/jakedeichert/rovr#readme",
   "dependencies": {
     "babel-core": "^6.3.26",
     "babel-preset-es2015": "^6.3.13",
@@ -53,7 +53,7 @@
     "utf8": "^2.1.1"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=5.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.3.17"

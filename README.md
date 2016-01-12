@@ -1,6 +1,6 @@
 <p align="center">
-    <a href="https://github.com/rovrjs/rovr">
-        <img alt="rovr logo" src="https://raw.githubusercontent.com/rovrjs/rovrjs.github.io/master-src/assets/images/logos/rovr-dark-small.png" width="400">
+    <a href="https://github.com/jakedeichert/rovr">
+        <img alt="rovr logo" src="https://raw.githubusercontent.com/jakedeichert/rovr-website/master/assets/images/logos/rovr-dark-small.png" width="400">
     </a>
 </p>
 
@@ -138,8 +138,7 @@ Checkout rovr on npm...
 
 Checkout the source for the rovr website.
 
-* [rovrjs/rovrjs.github.io](https://github.com/rovrjs/rovrjs.github.io)
-* [rovrjs.github.io](https://rovrjs.github.io)
+* [jakedeichert/rovr-website](https://github.com/jakedeichert/rovr-website)
 
 
 ### Plugins
@@ -171,4 +170,4 @@ rovr
 
 Copyright (c) 2015, [Jake Deichert](https://github.com/jakedeichert)
 
-[MIT License](https://github.com/rovrjs/rovr/blob/master/LICENSE)
+[MIT License](https://github.com/jakedeichert/rovr/blob/master/LICENSE)
