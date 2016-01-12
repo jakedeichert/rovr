@@ -58,15 +58,18 @@ export default class Rovr {
      * Add plugins to the generation pipeline.
      * @param {Object} plugin - A plugin that will be added to the pipeline.
      * @desc
-     * TODO: create better plugin documentation!
-     * Plugins with 'pre' and/or 'post' functions will be added to the
-     * respective pipelines.
+     * Take a look at rovr-components, rovr-layouts, and rovr-renderer to see
+     * good examples.
      *
-     * Example plugin:
-     * {
-     *      pre: function(files, rovr, callback) {...},
-     *      post: function(files, rovr, callback) {...}
-     * }
+     * A plugin is a class with one or more hook functions:
+     *
+     *      pre(files, rovr, doneCallback) - This hooks into the pre-render pipeline.
+     *          These plugins are ran before rovr-renderer which converts markdown
+     *          to html and renders react components.
+     *
+     *      post(files, rovr, doneCallback) - This hooks into the post-render pipeline.
+     *          These plugins are ran after the rovr-renderer is finished but before
+     *          the files are written to the destination directory.
      */
     use(plugin) {
         if (!this.plugins[plugin.constructor.name]) this.plugins[plugin.constructor.name] = plugin;

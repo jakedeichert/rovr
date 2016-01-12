@@ -142,13 +142,22 @@ Checkout the source for the rovr website.
 * [rovrjs.github.io](https://rovrjs.github.io)
 
 
+### Plugins
+
+You can add plugins to the rovr generation pipeline. A plugin is a class with one or more hook functions:
+
+**pre(files, rovr, doneCallback)**
+
+This hooks into the pre-render pipeline. These plugins are ran before rovr-renderer which converts markdown to html and renders react components.
+
+**post(files, rovr, doneCallback)**
+
+This hooks into the post-render pipeline. These plugins are ran after the rovr-renderer is finished but before the files are written to the destination directory.
 
 
 ## CLI
 
-The CLI is a little uninspiring right now... but this is the next big task on my todo list.
-
-Simply build your website by running `rovr` in a directory. By default, rovr outputs to a destination directory named `_BUILD`
+The CLI isn't much at all. Simply build your website by running `rovr` in a directory. By default, rovr outputs to a destination directory named `_BUILD`
 
 The CLI will attempt to load the `_config.yml` and `_metadata.yml` files if they exist.
 
@@ -156,19 +165,6 @@ The CLI will attempt to load the `_config.yml` and `_metadata.yml` files if they
 cd website
 rovr
 ~~~
-
-
-
-## More Details
-
-Once I complete the [rovr website](https://rovrjs.github.io), it will become the home for all documentation and examples.
-
-More details coming soon for:
-
-* API
-* config options
-* plugins
-
 
 
 ## License
