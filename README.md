@@ -92,7 +92,7 @@ class Nav extends React.Component {
             <a href="/">Home</a>
             <a href="/docs">Docs</a>
             <a href="/api">API</a>
-            <PrimaryButton text="GitHub" href="https://github.com/rovrjs/rovr"/>
+            <PrimaryButton text="GitHub" href="https://github.com/jakedeichert/rovr"/>
         </nav>;
     }
 }
