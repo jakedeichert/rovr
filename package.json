@@ -1,13 +1,15 @@
 {
   "name": "rovr",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A react + markdown static site generator",
   "keywords": [
     "react",
     "markdown",
     "static",
     "site",
-    "generator"
+    "blog",
+    "generator",
+    "template"
   ],
   "preferGlobal": "true",
   "main": "lib/core/index.js",
@@ -22,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rovrjs/rovr.git"
+    "url": "git+https://github.com/jakedeichert/rovr.git"
   },
   "author": {
     "name": "Jake Deichert",
@@ -31,27 +33,29 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rovrjs/rovr/issues"
+    "url": "https://github.com/jakedeichert/rovr/issues"
   },
-  "homepage": "https://github.com/rovrjs/rovr#readme",
+  "homepage": "https://github.com/jakedeichert/rovr#readme",
   "dependencies": {
-    "babel-core": "^5.7.4",
+    "babel-core": "^6.3.26",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
     "cheerio": "^0.19.0",
-    "front-matter": "^2.0.0",
+    "front-matter": "^2.0.5",
     "fs-extra": "^0.25.0",
-    "highlight.js": "^8.7.0",
-    "js-yaml": "^3.3.1",
-    "marked": "^0.3.3",
+    "highlight.js": "^8.9.1",
+    "js-yaml": "^3.4.6",
+    "marked": "^0.3.5",
     "merge": "^1.2.0",
-    "react": "^0.14.0",
-    "react-dom": "^0.14.0",
-    "recursive-readdir": "^1.2.1",
+    "react": "^0.14.5",
+    "react-dom": "^0.14.5",
+    "recursive-readdir": "^1.3.0",
     "utf8": "^2.1.1"
   },
-  "devDependencies": {
-    "babel": "^5.8.23"
-  },
   "engines": {
-    "node" : ">=4.0.0"
+    "node": ">=5.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.3.17"
   }
 }

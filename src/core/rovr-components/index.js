@@ -1,16 +1,22 @@
 import path from 'path';
 
-export default function plugin() {
-    return function(files, rovr) {
-        for (let f in files) {
-            // Check if it's in the layouts folder.
-            if (f.match(`^_components`) && f.match('.jsx?$')) {
-                rovr.components[f] = {
-                    name: path.basename(f).replace(/\.jsx?$/, ''),
-                    fileData: files[f]
-                };
-                delete files[f];
+export default class RovrComponents {
+    constructor() {
+        this.components = [];
+        Object.seal(this);
+    }
+
+    pre(files, rovr, callback) {
+        for (let f of files) {
+            // Check if it's in the components folder.
+            if (f.path.match(`^_components`) && f.path.match('.jsx?$')) {
+                f.shouldParse = false;
+                this.components.push({
+                    name: path.basename(f.path).replace(/\.jsx?$/, ''),
+                    file: f
+                });
             }
         }
-    };
+        callback();
+    }
 }

@@ -1,8 +1,14 @@
-<a href="https://github.com/rovrjs/rovr">
-    <img alt="rovr logo" src="https://raw.githubusercontent.com/rovrjs/rovrjs.github.io/master-src/assets/images/logos/rovr-dark.png">
-</a>
+<p align="center">
+    <a href="https://github.com/jakedeichert/rovr">
+        <img alt="rovr logo" src="https://raw.githubusercontent.com/jakedeichert/rovr-website/master/assets/images/logos/rovr-dark-small.png" width="400">
+    </a>
+</p>
 
-> A fast and flexible React static site generator
+<p align="center">
+    <strong>A fast and flexible React static site generator</strong>
+</p>
+
+---
 
 **rovr** is a special static site generator that allows you to mix React, html, and markdown when writing pages.
 
@@ -39,33 +45,26 @@ rovr expects a few things from your source directory...
 Here's the basic structure for a rovr website:
 
 ~~~
-website/
-    _BUILD/ ----------------------------- the default destination directory that rovr builds to
-
-    _components/ ------------------------ js(x) React component files
-        buttons/
-            PrimaryButton.jsx
-            SecondaryButton.js
-        Footer.js
-        Header.jsx
-        Nav.js
-
-    _layouts/ --------------------------- html layout files for pages
-        default.html
-        post.html
-
-    _my-stuff/ -------------------------- rovr ignores files/dirs that start with an underscore
-        secret-journal.md
-
-    posts/ ------------------------------ you like to blog right?
-        post-1.md
-        post-2.md
-
-    _config.yml ------------------------ configure rovr
-
-    _metadata.yml ---------------------- site metadata
-
-    index.html ------------------------- everyone has one of these
+website
+├── _BUILD --------------- the default destination that rovr builds to
+├── _components ---------- js(x) React component files
+│   ├── buttons
+│   │   ├── PrimaryButton.jsx
+│   │   └── SecondaryButton.js
+│   ├── Footer.js
+│   ├── Header.jsx
+│   └── Nav.js
+├── _layouts ------------- html layout files for pages
+│   ├── default.html
+│   └── post.html
+├── _my-stuff ------------ rovr ignores files/dirs that start with an underscore
+│   └── secret-journal.md
+├── posts ---------------- you like to blog right?
+│   ├── post-1.md
+│   └── post-2.md
+├── _config.yml ---------- configure rovr
+├── _metadata.yml -------- site metadata
+└── index.html ----------- everyone has one of these
 ~~~
 
 
@@ -93,7 +92,7 @@ class Nav extends React.Component {
             <a href="/">Home</a>
             <a href="/docs">Docs</a>
             <a href="/api">API</a>
-            <PrimaryButton text="GitHub" href="https://github.com/rovrjs/rovr"/>
+            <PrimaryButton text="GitHub" href="https://github.com/jakedeichert/rovr"/>
         </nav>;
     }
 }
@@ -139,17 +138,25 @@ Checkout rovr on npm...
 
 Checkout the source for the rovr website.
 
-* [rovrjs/rovrjs.github.io](https://github.com/rovrjs/rovrjs.github.io)
-* [rovrjs.github.io](https://rovrjs.github.io)
+* [jakedeichert/rovr-website](https://github.com/jakedeichert/rovr-website)
 
 
+### Plugins
+
+You can add plugins to the rovr generation pipeline. A plugin is a class with one or more hook functions:
+
+**pre(files, rovr, doneCallback)**
+
+This hooks into the pre-render pipeline. These plugins are ran before rovr-renderer which converts markdown to html and renders react components.
+
+**post(files, rovr, doneCallback)**
+
+This hooks into the post-render pipeline. These plugins are ran after the rovr-renderer is finished but before the files are written to the destination directory.
 
 
 ## CLI
 
-The CLI is a little uninspiring right now... but this is the next big task on my todo list.
-
-Simply build your website by running `rovr` in a directory. By default, rovr outputs to a destination directory named `_BUILD`
+The CLI isn't much at all. Simply build your website by running `rovr` in a directory. By default, rovr outputs to a destination directory named `_BUILD`
 
 The CLI will attempt to load the `_config.yml` and `_metadata.yml` files if they exist.
 
@@ -159,22 +166,8 @@ rovr
 ~~~
 
 
-
-## More Details
-
-Once I complete the [rovr website](https://rovrjs.github.io), it will become the home for all documentation and examples.
-
-More details coming soon for:
-
-* API
-* config options
-* plugins
-
-
-
 ## License
 
 Copyright (c) 2015, [Jake Deichert](https://github.com/jakedeichert)
 
-[MIT License](https://github.com/rovrjs/rovr/blob/master/LICENSE)
-
+[MIT License](https://github.com/jakedeichert/rovr/blob/master/LICENSE)

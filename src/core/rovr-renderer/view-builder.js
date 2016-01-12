@@ -5,20 +5,22 @@ import View from './view.js';
 
 export default class ViewBuilder {
 
-    constructor(siteMetadata, options) {
+    constructor(siteMetadata, layouts, options) {
         this.siteMetadata = siteMetadata;
         this.layouts = {};
         this.options = options;
+        for (let layout of layouts) {
+            this.addLayout(layout.name, layout.file);
+        }
     }
 
     /**
      * Add a layout to the list of available layouts.
      * @param {string} layoutName - The name of the layout.
-     * @param {Object} frontMatter - The front matter of the layout containing
-     *      the body and attributes.
+     * @param {Object} file - The RovrFile data object.
      */
-    addLayout(layoutName, frontMatter) {
-        this.layouts[layoutName] = frontMatter;
+    addLayout(layoutName, file) {
+        this.layouts[layoutName] = file;
     }
 
     /**
@@ -26,20 +28,16 @@ export default class ViewBuilder {
      * @param {string} markdown - The markdown to convert to html.
      * @return {string} The converted html.
      */
-    getHTML(markdown) {
+    _getHTML(markdown) {
         let html = '';
-        if (this.options.highlightSyntax) {
+        if (this.options.highlightSyntax === true) {
             html = marked(markdown, {
                 highlight: function (code, lang) {
-                    // If the lang is undefined, it's not a code block so I
-                    // prepend and append a special string which helps me remove
-                    // the generated <pre><code> tags that marked adds.
-                    if (lang == undefined) return `rovr_not_code${code}rovr_not_code`;
+                    // If the lang is undefined, don't highlight this code block.
+                    if (lang == undefined) return code;
                     return hljs.highlight(lang, code).value;
                 }
             });
-            // Remove <pre><code> tags that were wrongly added.
-            html = html.replace(/<pre><code>rovr_not_code|rovr_not_code[\n]*<\/code><\/pre>/g, '');
         } else {
             html = marked(markdown);
         }
@@ -47,15 +45,14 @@ export default class ViewBuilder {
     }
 
     /**
-     * Generates a page based on front matter data.
-     * @param {Object} frontMatter - The front matter of the page containing
-     *      the body and attributes.
+     * Generates a page based on the file's metadata.
+     * @param {Object} file - The RovrFile data object.
      * @param {bool} convertMarkdown - Whether to convert markdown to HTML or not.
      * @return {string} The final view.
      */
-    generate(frontMatter, convertMarkdown) {
-        let body = convertMarkdown ? this.getHTML(frontMatter.body) : frontMatter.body;
-        let view = new View(body, frontMatter.attributes);
+    generate(file, convertMarkdown) {
+        let body = convertMarkdown ? this._getHTML(file.body) : file.body;
+        let view = new View(body, file.metadata);
 
         // If it has a layout, apply the layout.
         if (view.metadata.layout) {
@@ -74,8 +71,8 @@ export default class ViewBuilder {
      * @return {string} The final layout.
      */
     getLayout(layoutName) {
-        let lfm = this.layouts[layoutName];
-        let layout = new View(lfm.body, lfm.attributes);
+        let layoutFile = this.layouts[layoutName];
+        let layout = new View(layoutFile.body, layoutFile.metadata);
         // Check if this layout has a parent layout...
         // This will recursively load layouts into other layouts.
         if (layout.metadata.layout) {
