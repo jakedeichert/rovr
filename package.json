@@ -26,11 +26,6 @@
     "type": "git",
     "url": "git+https://github.com/jakedeichert/rovr.git"
   },
-  "author": {
-    "name": "Jake Deichert",
-    "email": "jacobdeichert@gmail.com",
-    "url": "http://jakedeichert.com"
-  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jakedeichert/rovr/issues"
